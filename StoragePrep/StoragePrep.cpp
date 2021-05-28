@@ -21,7 +21,7 @@ int _tmain(int argc, wchar_t* argv[])
 	GUID guidDomainId;
 	::CLSIDFromString(argv[3], &guidDomainId);
 
-	UINT32 ulStorageId = 0; // currently always 0
+	UINT32 ulStorageId = 0;
 
 	// connect
 	DataFoundation::InitializeThread();
