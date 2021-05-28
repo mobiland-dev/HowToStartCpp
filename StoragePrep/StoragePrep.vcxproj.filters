@@ -25,15 +25,26 @@
     <ClCompile Include="DADL.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <DADLFile Include="AccessDefinition.dadl">
-      <Filter>Daten</Filter>
-    </DADLFile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Quelldateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DADL.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <DADLFile Include="PrepareDefinition.dadl">
+      <Filter>Daten</Filter>
+    </DADLFile>
+  </ItemGroup>
+  <ItemGroup>
+    <DTDLFile Include="..\SimpleObjectCpp\DataDefinition.dtdl">
+      <Filter>Daten</Filter>
+    </DTDLFile>
   </ItemGroup>
 </Project>

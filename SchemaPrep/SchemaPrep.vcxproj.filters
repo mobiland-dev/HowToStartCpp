@@ -14,15 +14,12 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Daten">
-      <UniqueIdentifier>{738f6d17-0dea-4256-8a81-ff9815237dd5}</UniqueIdentifier>
+      <UniqueIdentifier>{01105289-b520-416d-8d2c-527f19961d0a}</UniqueIdentifier>
       <Extensions>dtdl;dadl</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SimpleObjectCpp.cpp">
-      <Filter>Quelldateien</Filter>
-    </ClCompile>
-    <ClCompile Include="DADL.cpp">
+    <ClCompile Include="SchemaPrep.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
@@ -30,21 +27,21 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <DTDLFile Include="DataDefinition.dtdl">
+    <ClInclude Include="stdafx.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <DTDLFile Include="..\SimpleObjectCpp\DataDefinition.dtdl">
       <Filter>Daten</Filter>
     </DTDLFile>
   </ItemGroup>
   <ItemGroup>
-    <DADLFile Include="AccessDefinition.dadl">
-      <Filter>Daten</Filter>
-    </DADLFile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="DADL.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Headerdateien</Filter>
-    </ClInclude>
+    <ResourceCompile Include="SchemaPrep.rc">
+      <Filter>Ressourcendateien</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
