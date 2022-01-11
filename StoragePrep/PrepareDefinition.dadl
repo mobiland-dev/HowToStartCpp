@@ -8,5 +8,3 @@ object ITestRoot
         RootName            [ get, set ];
     }
 };
-
-create (ITestRoot);

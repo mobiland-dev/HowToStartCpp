@@ -1,8 +1,5 @@
 #include "stdafx.h"
 
-#include <DataFS\Client\DataFS Client.h>
-//using namespace DataFoundation;
-
 #include <DataFS\Access\DataFS Access.h>
 using namespace DataFoundationAccess;
 
@@ -24,21 +21,21 @@ int _tmain(int argc, wchar_t* argv[])
 	UINT32 ulStorageId = 0;
 
 	// connect
-	DataFoundation::InitializeThread();
+	InitializeThread();
 
-	WDomain* pWDomain = NewWDomain(0);
-	if (FAILED(pWDomain->Initialize()))
+	WDomain* pWDomain = Domain_Create();
+	if (FAILED(pWDomain->Initialize(&guidDomainId)))
 	{
-		DeleteWDomain(pWDomain);
-		DataFoundation::UninitializeThread();
+		Domain_Destroy(pWDomain);
+		UninitializeThread();
 		return -1;
 	}
 
-	if (FAILED(pWDomain->Connect(strServerAddress, usServerPort, &guidDomainId, NULL)))
+	if (FAILED(pWDomain->Connect(strServerAddress, usServerPort, NULL)))
 	{
 		pWDomain->Uninitialize();
-		DeleteWDomain(pWDomain);
-		DataFoundation::UninitializeThread();
+		Domain_Destroy(pWDomain);
+		UninitializeThread();
 		return -1;
 	}
 
@@ -46,8 +43,8 @@ int _tmain(int argc, wchar_t* argv[])
 	{
 		pWDomain->DisconnectAll();
 		pWDomain->Uninitialize();
-		DeleteWDomain(pWDomain);
-		DataFoundation::UninitializeThread();
+		Domain_Destroy(pWDomain);
+		UninitializeThread();
 		return -1;
 	}
 
@@ -58,13 +55,13 @@ int _tmain(int argc, wchar_t* argv[])
 
 	DataFoundation::ObjectId oiRootObject;
 
-	pWDomain->QueryNamedObjectId(&guidRootName, &oiRootObject);
+	pWDomain->QueryNamedObjectId(&guidRootName, 1, &oiRootObject);
 
 	ITestRoot* pRootObject;
-	AccessDefinition::Open(pWDomain, &pRootObject, &oiRootObject);
+	ITestRoot::Open(&pRootObject, &oiRootObject, pWDomain);
 
 	pRootObject->Load();
-	pWDomain->Execute(TRANSACTION_LOAD);
+	pWDomain->Execute(Transaction::Load);
 
 	// open the list for writing
 
@@ -74,8 +71,7 @@ int _tmain(int argc, wchar_t* argv[])
 	// create an add a new object
 
 	ITestObject* pTestObject;
-
-	pRootObject->Create(&pTestObject);
+	ITestObject::Create(&pTestObject, pRootObject);
 
 	TestObjectListItem itm;
 	itm.anObject = pTestObject->BuildLink(true);
@@ -89,7 +85,7 @@ int _tmain(int argc, wchar_t* argv[])
 	pTestObject->StoreData();
 	pRootObject->StoreData();
 
-	pWDomain->Execute(TRANSACTION_STORE);
+	pWDomain->Execute(Transaction::Store);
 
 	pTestObject->Release();
 	pRootObject->Release();
@@ -102,8 +98,8 @@ int _tmain(int argc, wchar_t* argv[])
 	pWDomain->ReleaseStorage(ulStorageId);
 	pWDomain->DisconnectAll();
 	pWDomain->Uninitialize();
-	DeleteWDomain(pWDomain);
-	DataFoundation::UninitializeThread();
+	Domain_Destroy(pWDomain);
+	UninitializeThread();
 
 	return 0;
 }

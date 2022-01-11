@@ -1,8 +1,5 @@
 #include "stdafx.h"
 
-#include <DataFS\Client\DataFS Client.h>
-//using namespace DataFoundation;
-
 #include <DataFS\Access\DataFS Access.h>
 using namespace DataFoundationAccess;
 
@@ -24,21 +21,21 @@ int _tmain(int argc, wchar_t* argv[])
 	UINT32 ulStorageId = 0;
 
 	// connect
-	DataFoundation::InitializeThread();
+	InitializeThread();
 
-	WDomain* pWDomain = NewWDomain(0);
-	if (FAILED(pWDomain->Initialize()))
+	WDomain* pWDomain = Domain_Create();
+	if (FAILED(pWDomain->Initialize(&guidDomainId)))
 	{
-		DeleteWDomain(pWDomain);
-		DataFoundation::UninitializeThread();
+		Domain_Destroy(pWDomain);
+		UninitializeThread();
 		return -1;
 	}
 
-	if (FAILED(pWDomain->Connect(strServerAddress, usServerPort, &guidDomainId, NULL)))
+	if (FAILED(pWDomain->Connect(strServerAddress, usServerPort, NULL)))
 	{
 		pWDomain->Uninitialize();
-		DeleteWDomain(pWDomain);
-		DataFoundation::UninitializeThread();
+		Domain_Destroy(pWDomain);
+		UninitializeThread();
 		return -1;
 	}
 
@@ -46,8 +43,8 @@ int _tmain(int argc, wchar_t* argv[])
 	{
 		pWDomain->DisconnectAll();
 		pWDomain->Uninitialize();
-		DeleteWDomain(pWDomain);
-		DataFoundation::UninitializeThread();
+		Domain_Destroy(pWDomain);
+		UninitializeThread();
 		return -1;
 	}
 
@@ -57,8 +54,7 @@ int _tmain(int argc, wchar_t* argv[])
 	// create named object
 
 	ITestRoot* pRootObject;
-
-	PrepareDefinition::Create(pWDomain, &pRootObject);
+	ITestRoot::Create(&pRootObject, pWDomain);
 
 	pRootObject->SetRootName(L"first test root");
 
@@ -66,7 +62,7 @@ int _tmain(int argc, wchar_t* argv[])
 
 	pWDomain->InsertNamedObject(&pRootObject->BuildLink(true), &guidRootName, L"first entry point");
 
-	pWDomain->Execute(TRANSACTION_STORE);
+	pWDomain->Execute(Transaction::Store);
 
 	pRootObject->Release();
 
@@ -78,8 +74,8 @@ int _tmain(int argc, wchar_t* argv[])
 	pWDomain->ReleaseStorage(ulStorageId);
 	pWDomain->DisconnectAll();
 	pWDomain->Uninitialize();
-	DeleteWDomain(pWDomain);
-	DataFoundation::UninitializeThread();
+	Domain_Destroy(pWDomain);
+	UninitializeThread();
 
 	return 0;
 }

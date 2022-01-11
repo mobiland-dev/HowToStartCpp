@@ -8,11 +8,7 @@ object ITestRoot
         RootName            [ get, set ];
         AllObjects          [ get, set ];
     }
-
-    create(ITestObject); open(ITestObject);
 };
-
-open(ITestRoot);
 
 object ITestObject
 {
