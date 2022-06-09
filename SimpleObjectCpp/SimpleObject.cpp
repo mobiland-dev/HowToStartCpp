@@ -21,6 +21,7 @@ int _tmain(int argc, wchar_t* argv[])
 	UINT32 ulStorageId = 0;
 
 	// connect
+
 	InitializeThread();
 
 	WDomain* pWDomain = Domain_Create();
