@@ -50,6 +50,7 @@ int _tmain(int argc, wchar_t* argv[])
 	}
 
 	// bind types
+
 	AccessDefinition::Bind(pWDomain);
 
 	// open named object
@@ -92,6 +93,7 @@ int _tmain(int argc, wchar_t* argv[])
 	pRootObject->Release();
 
 	// unbind types
+
 	AccessDefinition::Unbind();
 
 	// disconnect

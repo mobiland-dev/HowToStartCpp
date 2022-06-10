@@ -21,6 +21,7 @@ int _tmain(int argc, wchar_t* argv[])
 	UINT32 ulStorageId = 0;
 
 	// connect
+
 	InitializeThread();
 
 	WDomain* pWDomain = Domain_Create();
@@ -49,6 +50,7 @@ int _tmain(int argc, wchar_t* argv[])
 	}
 
 	// bind types
+
 	PrepareDefinition::Bind(pWDomain);
 
 	// create named object
@@ -67,6 +69,7 @@ int _tmain(int argc, wchar_t* argv[])
 	pRootObject->Release();
 
 	// unbind types
+
 	PrepareDefinition::Unbind();
 
 	// disconnect

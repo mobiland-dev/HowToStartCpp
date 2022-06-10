@@ -15,6 +15,7 @@ int _tmain(int argc, wchar_t* argv[])
 	::CLSIDFromString(argv[3], &guidDomainId);
 
 	// connect
+
 	DataFoundation::InitializeThread();
 
 	DataFoundation::Connection* pConnection;
@@ -28,6 +29,7 @@ int _tmain(int argc, wchar_t* argv[])
 	}
 
 	// extend schema
+
 	HRSRC hBdtd = ::FindResource(::GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_RT_BDTD1), L"RT_BDTD");
 	void* pBdtd = ::LockResource(::LoadResource(::GetModuleHandle(NULL), hBdtd));
 	int iBdtdSize = ::SizeofResource(::GetModuleHandle(NULL), hBdtd);
