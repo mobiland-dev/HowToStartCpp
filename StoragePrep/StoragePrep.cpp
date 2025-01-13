@@ -1,7 +1,7 @@
-#include "stdafx.h"
+#include "pch.h"
 
 #include <DataFS\Access\DataFS Access.h>
-using namespace DataFoundationAccess;
+using namespace DataFSAccess;
 
 #include "_data\PrepareDefinition.h"
 
@@ -24,27 +24,42 @@ int _tmain(int argc, wchar_t* argv[])
 
 	InitializeThread();
 
+	Connection* pConnection = Connection_Create();
+
+	if(FAILED(pConnection->Initialize(&guidDomainId)))
+	{
+		Connection_Destroy(pConnection);
+		UninitializeThread();
+		return -1;
+	}
+
+	if(FAILED(pConnection->Connect(strServerAddress, usServerPort, NULL)))
+	{
+		pConnection->Uninitialize();
+		Connection_Destroy(pConnection);
+		UninitializeThread();
+		return -1;
+	}
+
+	if(FAILED(pConnection->QueryStorage(ulStorageId, false)))
+	{
+		pConnection->DisconnectAll();
+		pConnection->Uninitialize();
+		Connection_Destroy(pConnection);
+		UninitializeThread();
+		return -1;
+	}
+
+	// build domain
+
 	WDomain* pWDomain = Domain_Create();
-	if (FAILED(pWDomain->Initialize(&guidDomainId)))
+	if(FAILED(pWDomain->Initialize(pConnection, 0)))
 	{
 		Domain_Destroy(pWDomain);
-		UninitializeThread();
-		return -1;
-	}
-
-	if (FAILED(pWDomain->Connect(strServerAddress, usServerPort, NULL)))
-	{
-		pWDomain->Uninitialize();
-		Domain_Destroy(pWDomain);
-		UninitializeThread();
-		return -1;
-	}
-
-	if (FAILED(pWDomain->QueryStorage(ulStorageId, false)))
-	{
-		pWDomain->DisconnectAll();
-		pWDomain->Uninitialize();
-		Domain_Destroy(pWDomain);
+		pConnection->ReleaseAllStorages();
+		pConnection->DisconnectAll();
+		pConnection->Uninitialize();
+		Connection_Destroy(pConnection);
 		UninitializeThread();
 		return -1;
 	}
@@ -55,16 +70,16 @@ int _tmain(int argc, wchar_t* argv[])
 
 	// create named object
 
-	ITestRoot* pRootObject;
-	ITestRoot::Create(&pRootObject, pWDomain);
+	TestRoot* pRootObject;
+	TestRoot::Create(&pRootObject, pWDomain, &DataFS::OBJECTID_NULL);
 
 	pRootObject->SetRootName(L"first test root");
 
-	pRootObject->StoreData();
+	pRootObject->Store();
 
-	pWDomain->InsertNamedObject(&pRootObject->BuildLink(true), &guidRootName, L"first entry point");
+	pWDomain->InsertNamedLink(&pRootObject->BuildLink(true), &guidRootName, L"first entry point");
 
-	pWDomain->Execute(Transaction::Store);
+	pWDomain->Execute(Transaction::Store, NULL);
 
 	pRootObject->Release();
 
@@ -72,12 +87,17 @@ int _tmain(int argc, wchar_t* argv[])
 
 	PrepareDefinition::Unbind();
 
-	// disconnect
+	// destroy domain
 
-	pWDomain->ReleaseStorage(ulStorageId);
-	pWDomain->DisconnectAll();
 	pWDomain->Uninitialize();
 	Domain_Destroy(pWDomain);
+
+	// disconnect
+
+	pConnection->ReleaseAllStorages();
+	pConnection->DisconnectAll();
+	pConnection->Uninitialize();
+	Connection_Destroy(pConnection);
 	UninitializeThread();
 
 	return 0;

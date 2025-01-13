@@ -22,7 +22,7 @@
     <ClCompile Include="DADL.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="pch.cpp">
       <Filter>Quelldateien</Filter>
     </ClCompile>
     <ClCompile Include="SimpleObject.cpp">
@@ -43,7 +43,7 @@
     <ClInclude Include="DADL.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="pch.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
   </ItemGroup>

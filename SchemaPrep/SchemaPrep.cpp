@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "pch.h"
 
 #include "resource.h"
 
@@ -16,15 +16,15 @@ int _tmain(int argc, wchar_t* argv[])
 
 	// connect
 
-	DataFoundation::InitializeThread();
+	DataFS::InitializeThread();
 
-	DataFoundation::Connection* pConnection;
-	DataFoundation::Connection_Create(&pConnection);
+	DataFS::Connection* pConnection;
+	DataFS::Connection_Create(&pConnection);
 
-	if (FAILED(pConnection->ConnectW(strServerAddress, usServerPort, NULL)))
+	if(FAILED(pConnection->ConnectW(strServerAddress, usServerPort, NULL)))
 	{
-		DataFoundation::Connection_Destroy(pConnection);
-		DataFoundation::UninitializeThread();
+		DataFS::Connection_Destroy(pConnection);
+		DataFS::UninitializeThread();
 		return -1;
 	}
 
@@ -34,9 +34,9 @@ int _tmain(int argc, wchar_t* argv[])
 	void* pBdtd = ::LockResource(::LoadResource(::GetModuleHandle(NULL), hBdtd));
 	int iBdtdSize = ::SizeofResource(::GetModuleHandle(NULL), hBdtd);
 
-	DataFoundation::USchemaEdit* pSchema;
+	DataFS::USchemaEdit* pSchema;
 
-	if (SUCCEEDED(pConnection->QuerySchemaEdit(&pSchema, &guidDomainId)))
+	if(SUCCEEDED(pConnection->QuerySchemaEdit(&pSchema, &guidDomainId)))
 	{
 		pSchema->CreateFromBinary(pBdtd, iBdtdSize);
 		pSchema->Commit();
@@ -44,8 +44,8 @@ int _tmain(int argc, wchar_t* argv[])
 	}
 
 	pConnection->Disconnect();
-	DataFoundation::Connection_Destroy(pConnection);
-	DataFoundation::UninitializeThread();
+	DataFS::Connection_Destroy(pConnection);
+	DataFS::UninitializeThread();
 
 	return 0;
 }

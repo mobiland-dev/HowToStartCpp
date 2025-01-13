@@ -1,7 +1,7 @@
-#include "stdafx.h"
+#include "pch.h"
 
 #include <DataFS\Access\DataFS Access.h>
-using namespace DataFoundationAccess;
+using namespace DataFSAccess;
 
 #include "_data\AccessDefinition.h"
 
@@ -24,27 +24,42 @@ int _tmain(int argc, wchar_t* argv[])
 
 	InitializeThread();
 
+	Connection* pConnection = Connection_Create();
+
+	if(FAILED(pConnection->Initialize(&guidDomainId)))
+	{
+		Connection_Destroy(pConnection);
+		UninitializeThread();
+		return -1;
+	}
+
+	if(FAILED(pConnection->Connect(strServerAddress, usServerPort, NULL)))
+	{
+		pConnection->Uninitialize();
+		Connection_Destroy(pConnection);
+		UninitializeThread();
+		return -1;
+	}
+
+	if(FAILED(pConnection->QueryStorage(ulStorageId, false)))
+	{
+		pConnection->DisconnectAll();
+		pConnection->Uninitialize();
+		Connection_Destroy(pConnection);
+		UninitializeThread();
+		return -1;
+	}
+
+	// build domain
+
 	WDomain* pWDomain = Domain_Create();
-	if (FAILED(pWDomain->Initialize(&guidDomainId)))
+	if(FAILED(pWDomain->Initialize(pConnection, 0)))
 	{
 		Domain_Destroy(pWDomain);
-		UninitializeThread();
-		return -1;
-	}
-
-	if (FAILED(pWDomain->Connect(strServerAddress, usServerPort, NULL)))
-	{
-		pWDomain->Uninitialize();
-		Domain_Destroy(pWDomain);
-		UninitializeThread();
-		return -1;
-	}
-
-	if (FAILED(pWDomain->QueryStorage(ulStorageId, false)))
-	{
-		pWDomain->DisconnectAll();
-		pWDomain->Uninitialize();
-		Domain_Destroy(pWDomain);
+		pConnection->ReleaseAllStorages();
+		pConnection->DisconnectAll();
+		pConnection->Uninitialize();
+		Connection_Destroy(pConnection);
 		UninitializeThread();
 		return -1;
 	}
@@ -55,15 +70,15 @@ int _tmain(int argc, wchar_t* argv[])
 
 	// open named object
 
-	DataFoundation::ObjectId oiRootObject;
+	DataFS::ObjectId oiRootObject;
 
-	pWDomain->QueryNamedObjectId(&guidRootName, 1, &oiRootObject);
+	pWDomain->QueryNamedLinkId(&guidRootName, 1, &oiRootObject, NULL);
 
-	ITestRoot* pRootObject;
-	ITestRoot::Open(&pRootObject, &oiRootObject, pWDomain);
+	TestRoot* pRootObject;
+	TestRoot::Open(&pRootObject, pWDomain, &oiRootObject);
 
 	pRootObject->Load();
-	pWDomain->Execute(Transaction::Load);
+	pWDomain->Execute(Transaction::Load, NULL);
 
 	// open the list for writing
 
@@ -72,8 +87,8 @@ int _tmain(int argc, wchar_t* argv[])
 
 	// create an add a new object
 
-	ITestObject* pTestObject;
-	ITestObject::Create(&pTestObject, pRootObject);
+	TestObject* pTestObject;
+	TestObject::Create(&pTestObject, pRootObject->GetObject());
 
 	TestObjectListItem itm;
 	itm.anObject = pTestObject->BuildLink(true);
@@ -84,10 +99,10 @@ int _tmain(int argc, wchar_t* argv[])
 	pTestObject->SetText(L"something");
 	pTestObject->SetNumber(343);
 
-	pTestObject->StoreData();
-	pRootObject->StoreData();
+	pTestObject->Store();
+	pRootObject->Store();
 
-	pWDomain->Execute(Transaction::Store);
+	pWDomain->Execute(Transaction::Store, NULL);
 
 	pTestObject->Release();
 	pRootObject->Release();
@@ -96,12 +111,17 @@ int _tmain(int argc, wchar_t* argv[])
 
 	AccessDefinition::Unbind();
 
-	// disconnect
+	// destroy domain
 
-	pWDomain->ReleaseStorage(ulStorageId);
-	pWDomain->DisconnectAll();
 	pWDomain->Uninitialize();
 	Domain_Destroy(pWDomain);
+
+	// disconnect
+
+	pConnection->ReleaseAllStorages();
+	pConnection->DisconnectAll();
+	pConnection->Uninitialize();
+	Connection_Destroy(pConnection);
 	UninitializeThread();
 
 	return 0;

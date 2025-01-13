@@ -1,7 +1,7 @@
 
 #import <DataDefinition.bdtd>
 
-object ITestRoot
+object TestRoot
 {
     TestRoot
     {
@@ -10,7 +10,7 @@ object ITestRoot
     }
 };
 
-object ITestObject
+object TestObject
 {
     TestObject
     {
