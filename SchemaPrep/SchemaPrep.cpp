@@ -3,7 +3,7 @@
 #include "resource.h"
 
 #include <DataFS\Client\DataFS Client.h>
-//using namespace DataFoundation;
+//using namespace DataFS;
 
 int _tmain(int argc, wchar_t* argv[])
 {
