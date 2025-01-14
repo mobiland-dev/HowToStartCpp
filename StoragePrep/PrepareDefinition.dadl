@@ -3,8 +3,8 @@
 
 object TestRoot
 {
-    TestRoot
-    {
-        RootName            [ get, set ];
-    }
+	TestRoot
+	{
+		RootName			[ get, set ];
+	}
 };

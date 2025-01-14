@@ -3,18 +3,18 @@
 
 object TestRoot
 {
-    TestRoot
-    {
-        RootName            [ get, set ];
-        AllObjects          [ get, set ];
-    }
+	TestRoot
+	{
+		RootName			[ get, set ];
+		AllObjects			[ get, set ];
+	}
 };
 
 object TestObject
 {
-    TestObject
-    {
-        Text                [ get, set ];
-        Number              [ get, set ];
-    }
+	TestObject
+	{
+		Text				[ get, set ];
+		Number				[ get, set ];
+	}
 };

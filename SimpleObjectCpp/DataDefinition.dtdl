@@ -2,29 +2,29 @@
 ["root object"]
 class TestRoot [id({1B013DB1-5219-4363-9E02-BD85D7E24413})]
 {
-    wstring           RootName;
-    TestObjectList    AllObjects;
+	wstring			RootName;
+	TestObjectList	AllObjects;
 };
 
 ["object list"]
 list TestObjectList [id({3F96FB26-623E-4C52-86AF-2CBC89F5C23A}), ck]
 {
-    object            anObject;
-    int32             theType;
+	object			anObject;
+	int32			theType;
 };
 
 /*
-    the idea is to store objects of type 'TestObject'
-    in the 'anObject' variable of the 'TestObjectList'
-    items
+	the idea is to store objects of type 'TestObject'
+	in the 'anObject' variable of the 'TestObjectList'
+	items
 
-    remark: it is no restriction!
+	remark: it is no restriction!
 */
 objecttype TestObjectList.anObject(TestObject);
 
 // this class has no description
 class TestObject [id({B06E97E6-15D7-4B70-B94F-679F858E0FE8})]
 {
-    wstring           Text;
-    int32             Number;
+	wstring			Text;
+	int32			Number;
 };
